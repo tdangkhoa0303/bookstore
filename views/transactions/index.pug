@@ -1,0 +1,29 @@
+extend ../layout/common
+
+block content
+  h1 Transactions
+  if errors
+    each error in errors
+      .alert.alert-danger=error
+  table.table
+    thead
+      tr
+        th(scope='col') ID
+        th(scope='col') Bookname
+        th(scope='col') Status
+    tbody
+      each transaction, index in transactions
+        tr
+          td=index + (currentPage - 1)*perPage + 1
+          td=transaction.book.title
+          if !transaction.isComplete
+            td
+              a.btn.btn-primary(href="/transactions/" + transaction.id + "/complete") Complete
+          else
+            td Completed
+  - var n = 1;
+  nav(aria-label='Page navigation')
+  ul.pagination
+    while n < maxPageNum+1
+      li.page-item
+        a.page-link(href='/transactions?page='+n)=n++

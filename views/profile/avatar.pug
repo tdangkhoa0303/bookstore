@@ -1,0 +1,12 @@
+extend ../layout/common
+
+block content
+    h1 Update Avatar
+    if(errors) 
+      each error in errors
+        .alert.alert-danger=error
+    form(action="" method="POST" enctype="multipart/form-data")
+      .form-group
+        label(for='avatar') Avatar
+        input#avatar.form-control-file(type='file', name='avatar') 
+      button.btn.btn-primary(type='submit') Submit

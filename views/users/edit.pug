@@ -1,0 +1,9 @@
+extend ../layout/common
+
+block content
+    h1= 'Edit User ' + user.userName
+    form(action="/users/" + user._id + "/edit/" method="POST")
+      .form-group
+        label(for="title") New Username
+        input.form-control(type="text" name="userName")
+      button.btn.btn-primary(type='submit') Submit
