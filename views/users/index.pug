@@ -1,0 +1,21 @@
+extend ../layout/common
+
+block content
+    h1 Users List
+    form.form-inline(action="/users/" method="GET")
+      .form-group
+        input.form-control(type="text", name="q", placeholder="Username") 
+      button.btn.btn-primary.ml-2(type='submit') Search
+    
+    table.table
+      thead
+        tr
+          th(scope='col') Username
+          th(scope='col') Action
+      tbody
+        each user in users
+          tr
+            td=user.userName
+            td
+              a.btn.btn-secondary.mr-2(href="/users/" + user._id + "/edit/") Edit
+              a.btn.btn-light(href="/users/" + user._id + "/delete/") Delete

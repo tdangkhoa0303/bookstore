@@ -1,0 +1,9 @@
+extend ../layout/common
+
+block content
+    h1= 'Edit book ' + book.title
+    form(action="" method="POST")
+      .form-group
+        label(for="title") New Title &nbsp
+        input.form-control(type="text" name="title")
+      button.btn.btn-primary(type='submit') Create

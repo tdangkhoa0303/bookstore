@@ -1,0 +1,21 @@
+extend ../layout/common
+
+block content
+    h1 
+      span Cart 
+      a.btn.btn-primary.float-right(href="/transactions/create") Hire All
+    if(cartItems)
+      table.table
+        thead
+          tr
+            th(scope='col') ID
+            th(scope='col') Bookname
+        tbody
+          each cartItem, index in cartItems
+            tr
+              td=index + 1
+              td=cartItem.title
+      
+    else 
+      p You haven't added any book.
+      

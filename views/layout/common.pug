@@ -1,0 +1,38 @@
+html
+  head
+    link(rel="icon" href="https://cdn.glitch.com/e7a1f406-0e23-4b21-86ce-3f3967002e2b%2Fimage.png?v=1589043333029" type="image/gif" size="64x64")
+    link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css")
+    script(src="https://code.jquery.com/jquery-3.5.1.slim.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js")
+    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js")
+    
+  body
+    nav.navbar.navbar-expand-lg.navbar-light.bg-light
+      a.navbar-brand(href='/') Coders-X
+      button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation')
+        span.navbar-toggler-icon
+      #navbarNav.collapse.navbar-collapse
+        ul.navbar-nav
+          li.nav-item
+            a.nav-link(href='/books') Books
+          li.nav-item
+            if(user && user.isAdmin)
+              a.nav-link(href='/users') Users
+            else
+              a.nav-link(href='/transactions') Transactions
+          li.nav-item
+            a.nav-link(href='/profile') Profile
+          li.nav-item
+            a.nav-link(href='/cart') 
+              span Cart
+        
+      if(!user)
+        a.mr-2(href="/auth/signup") Sign Up
+        a.btn.btn-primary(href="/auth/signin") Sign In
+      else
+        a(href="/profile").d-flex.align-items-center
+          span=user.userName
+          figure.m-0.ml-2(style="width: 50px; border-radius: 50%; height: 50px; overflow: hidden")
+            img(src=user.avatarUrl, height="100%")
+    .container.mt-5
+      block content

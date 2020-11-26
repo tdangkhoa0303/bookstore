@@ -1,0 +1,30 @@
+extend ../layout/common
+
+block content
+    h2 Books List
+    if(user && user.isAdmin)
+      form(action="/books/create" method="POST" enctype="multipart/form-data")
+        .form-group
+          label(for="title") Title 
+          input.form-control(type="text", name="title")
+        .form-group
+          label(for="description") Description 
+          input.form-control(type="text", name="description")
+        .form-group
+          label(for='cover') Book Cover
+          input#cover.form-control-file(type='file', name='cover')
+        button.btn.btn-primary(type='submit') Create
+    .card-deck
+      each book in books
+        .card(style="max-width: 300px")
+            figure.card-img-top.d-flex.justify-content-center(style="height: 200px; overflow: hidden")
+              img(src=book.coverUrl, alt='Book cover', style="height: 100%")
+            .card-body.d-flex.flex-column.justify-content-between
+              h5.card-title=book.title 
+              p=book.description
+              if(user && user.isAdmin)
+                div
+                  a.btn.btn-secondary.mr-2(href='/books/' + book._id + '/edit') Edit
+                  a.btn.btn-light(href='/books/'+book._id+'/delete') Delete
+              else
+                a.btn.btn-primary(href='/cart/' + book._id + "/add") Add To Cart
