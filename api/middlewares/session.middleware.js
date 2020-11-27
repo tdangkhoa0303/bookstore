@@ -7,7 +7,7 @@ module.exports = async (req, res, next) => {
     if (!req.signedCookies.sessionId) {
       var sessionId = new mongoose.Types.ObjectId();
       res.cookie("sessionId", sessionId, {
-        signed: true
+        signed: true,
       });
       await Session.create({ _id: sessionId });
     }

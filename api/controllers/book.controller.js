@@ -2,14 +2,28 @@ const cloudinary = require("cloudinary").v2;
 const Book = require("../../models/book.model");
 
 module.exports.index = async (req, res) => {
+  const perPage = process.env.PER_PAGE || 10;
+  const { p: page = 1 } = req.query;
+
   try {
-    var books = await Book.find();
+    var books = await Book.find()
+      .limit(perPage)
+      .skip((page - 1) * perPage);
+    var count = await Book.countDocuments();
   } catch (err) {
     console.log(err);
-    res.json({ success: false, errors: [err] });
+    res.status(500).json({ success: false, message: "Something went wrong." });
     return;
   }
-  res.json({ success: true, response: books });
+  res.status(200).json({
+    success: true,
+    data: {
+      data: books,
+      maxPageNum: Math.round(count / perPage),
+      currentPage: page,
+      perPage: perPage,
+    },
+  });
 };
 
 module.exports.createBook = async (req, res) => {
@@ -17,7 +31,7 @@ module.exports.createBook = async (req, res) => {
   var result;
   try {
     result = await cloudinary.uploader.upload(path, {
-      folder: "Coders-x/Covers/"
+      folder: "Coders-x/Covers/",
     });
     req.body.coverUrl = result.secure_url;
   } catch (err) {

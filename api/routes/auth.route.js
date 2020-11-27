@@ -6,6 +6,6 @@ const validate = require("../validate/user.validate");
 
 router.post("/signin", controller.postSignIn);
 
-router.post("/signUp", validate.postSignUp, controller.postSignUp);
+router.post("/signup", validate.postSignUp, controller.postSignUp);
 
 module.exports = router;

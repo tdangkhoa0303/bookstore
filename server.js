@@ -6,6 +6,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const bookRoute = require("./routes/book.route");
 const userRoute = require("./routes/user.route");
@@ -33,12 +34,21 @@ const sessionMiddleware = require("./middlewares/session.middleware");
 mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  dbName: "bookManager"
+  useFindAndModify: false,
+  dbName: "bookManager",
 });
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(express.static("./public"));
+
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 app.use(sessionMiddleware);
 
 app.set("view engine", "pug");
@@ -68,5 +78,5 @@ app.use((err, req, res, next) => {
   res.status(500).render("./errors/500");
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 1402;
 app.listen(PORT, () => console.log("Server listening on port: " + PORT));

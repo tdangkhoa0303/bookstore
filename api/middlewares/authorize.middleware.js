@@ -7,10 +7,13 @@ module.exports = async (req, res, next) => {
     console.log(err);
   }
   res.locals.user = user;
+  req.user = user;
   if (!(user && user.isAdmin)) {
-    res.status(401).send("You cannot access this page.");
+    res.status(401).json({
+      success: false,
+      message: "You cannot access this page.",
+    });
     return;
   }
   next();
 };
-

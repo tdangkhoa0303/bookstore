@@ -2,7 +2,7 @@ const User = require("../../models/user.model");
 
 module.exports.requireAuth = async (req, res, next) => {
   if (!req.signedCookies.userId) {
-    res.status(401).send("Unauthorized request");
+    res.status(401).json({ success: false, error: "Unauthorized request" });
     return;
   }
 
@@ -13,7 +13,7 @@ module.exports.requireAuth = async (req, res, next) => {
   }
 
   if (!user) {
-    res.status(401).send("Unauthorized request");
+    res.status(401).json({ success: false, error: "Unauthorized request" });
     return;
   }
   next();

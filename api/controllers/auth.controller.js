@@ -12,7 +12,7 @@ module.exports.postSignIn = async (req, res) => {
   }
   if (!user) {
     res.status(401).json({
-      errors: ["This user does not exist."]
+      errors: ["This user does not exist."],
     });
     return;
   }
@@ -21,8 +21,8 @@ module.exports.postSignIn = async (req, res) => {
     res.status(401).json({
       values: req.body,
       errors: [
-        "Cannot login. You have entered wrong password more than 4 times."
-      ]
+        "Cannot login. You have entered wrong password more than 4 times.",
+      ],
     });
     return;
   }
@@ -30,7 +30,7 @@ module.exports.postSignIn = async (req, res) => {
   if (!checkPassword) {
     try {
       User.where(user).updateOne({
-        wrongLoginCount: user.wrongLoginCount ? user.wrongLoginCount + 1 : 1
+        wrongLoginCount: user.wrongLoginCount ? user.wrongLoginCount + 1 : 1,
       });
     } catch (err) {
       console.log(err);
@@ -44,7 +44,7 @@ module.exports.postSignIn = async (req, res) => {
         from: process.env.FROM_ADDRESS,
         subject: "Securce Alert",
         html:
-          "<strong>Someone are trying to access your account. Please check your account to make sure it's stil safe.</strong>"
+          "<strong>Someone are trying to access your account. Please check your account to make sure it's stil safe.</strong>",
       };
       try {
         await sgMail.send(msg);
@@ -54,15 +54,15 @@ module.exports.postSignIn = async (req, res) => {
     }
     res.status(401).json({
       values: req.body,
-      errors: ["Wrong password."]
+      errors: ["Wrong password."],
     });
     return;
   }
 
   res.cookie("userId", user._id, {
-    signed: true
+    signed: true,
   });
-  res.json({ success: true, respsone: user });
+  res.json({ success: true, data: { user } });
 };
 
 module.exports.postSignUp = async (req, res) => {

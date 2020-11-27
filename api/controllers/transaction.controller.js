@@ -14,7 +14,7 @@ module.exports.index = async (req, res) => {
       .sort("_id");
     var count = await Transaction.countDocuments({ user: userId });
   } catch (err) {
-    res.json({ success: false, errors: [err] });
+    res.json({ success: false, message: err.message });
     return;
   }
   var start = (page - 1) * perPage;
@@ -25,7 +25,7 @@ module.exports.index = async (req, res) => {
     transactions: transactions,
     maxPageNum: Math.round(count / perPage),
     currentPage: page,
-    perPage: perPage
+    perPage: perPage,
   });
 };
 
@@ -36,10 +36,10 @@ module.exports.createTransactions = async (req, res) => {
       .populate("cart")
       .select("cart");
     user.cart.forEach(
-      async book => await Transaction.create({ user: userId, book: book })
+      async (book) => await Transaction.create({ user: userId, book: book })
     );
     var transaction = await User.findOne({ _id: userId }).updateOne({
-      cart: []
+      cart: [],
     });
   } catch (err) {
     console.log(err);
@@ -60,7 +60,7 @@ module.exports.completeTransaction = async (req, res) => {
 
     var transaction = await Transaction.where({ _id: transactionId }).updateOne(
       {
-        isComplete: true
+        isComplete: true,
       }
     );
   } catch (err) {
