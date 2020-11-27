@@ -1,18 +1,19 @@
 const bcrypt = require("bcrypt");
 const sgMail = require("@sendgrid/mail");
 const User = require("../../models/user.model");
+const { basicDetails } = require("../../helpers/user.helper");
 
 module.exports.postSignIn = async (req, res) => {
   var email = req.body.email,
     password = req.body.password;
   try {
-    var user = await User.findOne({ email: email });
+    var user = await User.findOne({ email: email }).populate({ path: "books" });
   } catch (err) {
     console.log(err);
   }
   if (!user) {
     res.status(401).json({
-      errors: ["This user does not exist."],
+      message: "This user does not exist.",
     });
     return;
   }
@@ -20,9 +21,8 @@ module.exports.postSignIn = async (req, res) => {
   if (user.wrongLoginCount >= 4) {
     res.status(401).json({
       values: req.body,
-      errors: [
+      message:
         "Cannot login. You have entered wrong password more than 4 times.",
-      ],
     });
     return;
   }
@@ -54,7 +54,7 @@ module.exports.postSignIn = async (req, res) => {
     }
     res.status(401).json({
       values: req.body,
-      errors: ["Wrong password."],
+      message: "Wrong password.",
     });
     return;
   }
@@ -62,7 +62,7 @@ module.exports.postSignIn = async (req, res) => {
   res.cookie("userId", user._id, {
     signed: true,
   });
-  res.json({ success: true, data: { user } });
+  res.json({ success: true, data: { user: basicDetails(user) } });
 };
 
 module.exports.postSignUp = async (req, res) => {
@@ -79,5 +79,5 @@ module.exports.postSignUp = async (req, res) => {
     return;
   }
 
-  res.json({ success: true, respsone: user });
+  res.json({ success: true, respsone: basicDetails(user) });
 };

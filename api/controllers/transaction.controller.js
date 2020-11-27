@@ -1,6 +1,7 @@
 const Transaction = require("../../models/transaction.model");
 const User = require("../../models/user.model");
 const mongoose = require("mongoose");
+const Book = require("../../models/book.model");
 
 module.exports.index = async (req, res) => {
   var userId = req.signedCookies.userId;
@@ -21,11 +22,13 @@ module.exports.index = async (req, res) => {
   var end = page * perPage;
 
   res.json({
-    succes: true,
-    transactions: transactions,
-    maxPageNum: Math.round(count / perPage),
-    currentPage: page,
-    perPage: perPage,
+    success: true,
+    data: {
+      transactions: transactions,
+      maxPageNum: Math.round(count / perPage),
+      currentPage: page,
+      perPage: perPage,
+    },
   });
 };
 
@@ -35,18 +38,23 @@ module.exports.createTransactions = async (req, res) => {
     var user = await User.findOne({ _id: userId })
       .populate("cart")
       .select("cart");
-    user.cart.forEach(
-      async (book) => await Transaction.create({ user: userId, book: book })
+    // user.cart.map(
+    //   async (book) => await Transaction.create({ user: userId, book: book })
+    // );
+
+    await Promise.all(
+      user.cart.map((book) => Transaction.create({ user: userId, book: book }))
     );
-    var transaction = await User.findOne({ _id: userId }).updateOne({
+
+    await User.findOne({ _id: userId }).updateOne({
       cart: [],
     });
   } catch (err) {
     console.log(err);
-    res.json({ success: false, errors: [err] });
+    res.json({ success: false, message: err.message });
     return;
   }
-  res.json({ success: true, response: transaction });
+  res.json({ success: true });
 };
 
 module.exports.completeTransaction = async (req, res) => {
@@ -58,15 +66,20 @@ module.exports.completeTransaction = async (req, res) => {
       return;
     }
 
-    var transaction = await Transaction.where({ _id: transactionId }).updateOne(
-      {
-        isComplete: true,
-      }
-    );
+    await Transaction.where({ _id: transactionId }).updateOne({
+      isComplete: true,
+    });
+
+    const book = await Book.findById(transaction.book);
+    if (book.type !== "giveaway") {
+      await Book.findByIdAndUpdate(transaction.book, {
+        available: true,
+      });
+    }
   } catch (err) {
     console.log(err);
-    res.json({ success: false, errors: [err] });
+    res.json({ success: false, message: err.message });
     return;
   }
-  res.json({ success: true, response: transaction });
+  res.json({ success: true, data: { transaction } });
 };

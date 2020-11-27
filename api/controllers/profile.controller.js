@@ -30,16 +30,16 @@ module.exports.postAvatar = async (req, res) => {
   var result;
   try {
     result = await cloudinary.uploader.upload(path, {
-      folder: "Coders-x/Avatars/"
+      folder: "Coders-x/Avatars/",
     });
   } catch (err) {
     res.json({ success: false, errors: [err] });
     return;
   }
   await User.findOne({ _id: req.signedCookies.userId }).updateOne({
-    avatarUrl: result.secure_url
+    avatarUrl: result.secure_url,
   });
   const fs = require("fs");
   fs.unlinkSync(path);
-  res.json({ success: true, response: result.secure_url });
+  res.json({ success: true, data: { avatarUrl: result.secure_url } });
 };

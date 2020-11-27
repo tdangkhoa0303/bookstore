@@ -1,5 +1,6 @@
 const cloudinary = require("cloudinary").v2;
 const Book = require("../../models/book.model");
+const User = require("../../models/user.model");
 
 module.exports.index = async (req, res) => {
   const perPage = process.env.PER_PAGE || 10;
@@ -27,7 +28,9 @@ module.exports.index = async (req, res) => {
 };
 
 module.exports.createBook = async (req, res) => {
+  console.log(req.body);
   var path = req.file.path;
+  const user = req.user;
   var result;
   try {
     result = await cloudinary.uploader.upload(path, {
@@ -40,15 +43,16 @@ module.exports.createBook = async (req, res) => {
   }
   const fs = require("fs");
   fs.unlinkSync(path);
-
+  req.body.owner = user._id;
   try {
     var book = await Book.create(req.body);
   } catch (err) {
     console.log(err);
-    res.json({ success: false, errors: [err] });
+    res.json({ success: false, message: err.message });
     return;
   }
-  res.json({ success: true, response: book });
+  await User.findByIdAndUpdate(user._id, { $push: { books: book._id } });
+  res.json({ success: true, data: { book } });
 };
 
 module.exports.deleteBook = async (req, res) => {

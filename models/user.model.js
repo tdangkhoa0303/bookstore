@@ -7,8 +7,9 @@ var userSchema = new mongoose.Schema({
   isAdmin: Boolean,
   avatarUrl: String,
   wrongLoginCount: Number,
-  cart: [{ type: mongoose.Schema.ObjectId, ref: 'Book' }]
-})
+  cart: [{ type: mongoose.Schema.ObjectId, ref: "Book" }],
+  books: [{ type: mongoose.Schema.Types.ObjectId, ref: "Book" }],
+});
 
 var User = mongoose.model("User", userSchema, "users");
 module.exports = User;

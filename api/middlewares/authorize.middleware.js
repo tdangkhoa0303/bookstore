@@ -2,7 +2,9 @@ const User = require("../../models/user.model");
 
 module.exports = async (req, res, next) => {
   try {
-    var user = await User.findOne({ _id: req.signedCookies.userId });
+    var user = await User.findOne({ _id: req.signedCookies.userId }).populate({
+      path: "books",
+    });
   } catch (err) {
     console.log(err);
   }

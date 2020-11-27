@@ -1,4 +1,4 @@
-require("dotenv").config();
+if (process.env.ENVIRONMENT === "LOCAL") require("dotenv").config();
 
 const express = require("express");
 const app = express();
