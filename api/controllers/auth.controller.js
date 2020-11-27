@@ -61,9 +61,7 @@ module.exports.postSignIn = async (req, res) => {
 
   res.cookie("userId", user._id, {
     signed: true,
-    ...(process.env.ENVIRONTMENT === "LOCAL"
-      ? {}
-      : { samSite: "none", secure: true }),
+    ...(process.env.LOCAL ? {} : { sameSite: "none", secure: true }),
   });
   res.json({ success: true, data: { user: basicDetails(user) } });
 };

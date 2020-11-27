@@ -8,6 +8,7 @@ module.exports = async (req, res, next) => {
       var sessionId = new mongoose.Types.ObjectId();
       res.cookie("sessionId", sessionId, {
         signed: true,
+        ...(process.env.LOCAL ? {} : { sameSite: "none", secure: true }),
       });
       await Session.create({ _id: sessionId });
     }
